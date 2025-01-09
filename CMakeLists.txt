@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.12...3.30)
 
-set(NAME blinky)
+set(NAME blinky) # *** Replace this with your project's name. ***
+
 set(PICO_PLATFORM rp2350)
 set(PICO_BOARD pico2_w)
 
@@ -29,15 +30,14 @@ add_compile_options(-Wall)
 pico_sdk_init()
 
 set(SOURCE_FILES
-    src/blinky.cpp
+    src/blinky.cpp # *** Replace this with your source files. ***
 )
 
 add_executable(${NAME}
     ${SOURCE_FILES}
 )
 
-# Be pedantic about warnings
-# and sanitize for undefined behaviour.
+# Be pedantic about warnings and sanitize for undefined behaviour.
 set_source_files_properties(${SOURCE_FILES} PROPERTIES COMPILE_OPTIONS "-Wextra;-Wpedantic;-fsanitize=undefined")
 
 target_link_libraries(${NAME}

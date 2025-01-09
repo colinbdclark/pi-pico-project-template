@@ -1,6 +1,3 @@
 #!/bin/sh
 
-mkdir -p build
-cd build
-cmake ..
-make -j4
+cmake -B build "$@" && (cd build && make -j4)

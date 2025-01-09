@@ -2,8 +2,8 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug blinky",
-            "preLaunchTask": "Build blinky",
+            "name": "Remote Debug",
+            "preLaunchTask": "Debug Build",
             "executable": "${workspaceFolder}/build/blinky.elf",
             "request": "launch",
             "type": "cortex-debug",
