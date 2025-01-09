@@ -22,8 +22,7 @@
             },
             "command": "${workspaceFolder}/compile.sh -DCMAKE_BUILD_TYPE=Release",
             "group": {
-                "kind": "build",
-                "isDefault": true
+                "kind": "build"
             },
             "problemMatcher": ["$gcc"]
         }
