@@ -156,7 +156,7 @@ git fetch --tags
 git checkout <pico-sdk-release-tag-name>
 
 # Update all of Pico SDK's submodules
-git submodule --init --recursive
+git submodule update --init --recursive
 
 # Go back to the repository's top level
 # and commit the submodule's changes.
