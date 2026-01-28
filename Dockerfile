@@ -15,14 +15,14 @@ RUN apt-get update && \
 
 # Install Pi Pico SDK for building picotool with
 WORKDIR /
-RUN git clone https://github.com/raspberrypi/pico-sdk.git --branch 2.1.0
+RUN git clone https://github.com/raspberrypi/pico-sdk.git --branch 2.2.0
 WORKDIR /pico-sdk
 RUN git submodule update --init
 ENV PICO_SDK_PATH=/pico-sdk
 
 # Build and install picotool
 WORKDIR /
-RUN git clone https://github.com/raspberrypi/picotool.git --branch 2.1.0
+RUN git clone https://github.com/raspberrypi/picotool.git --branch 2.2.0-a4
 WORKDIR /picotool
 RUN git submodule update --init
 RUN mkdir build
