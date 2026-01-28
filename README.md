@@ -138,6 +138,44 @@ docker run -v `pwd`:/project -it --rm blinky
 
 The Docker and local builds share the same CMake build directory, but aren't compatible. Make sure to clean before switching between them.
 
+
+## Updating
+
+If you need to update to a newer version of the Pico SDK, here's the process for updating the submodules:
+
+### Update the pico-sdk Submodule
+
+```sh
+cd lib/pico-sdk
+
+# Fetch new tags from the pico-sdk repository
+# and check out the version you want to upgrade to.
+# After, you'll be in a detached head state.
+# That is ok.
+git fetch --tags
+git checkout <pico-sdk-release-tag-name>
+
+# Update all of Pico SDK's submodules
+git submodule --init --recursive
+
+# Go back to the repository's top level
+# and commit the submodule's changes.
+cd ../..
+git add lib/pico-sdk
+git commit
+```
+
+## Update the Tags Used in the Dockerfile
+The Docker file specifies tag versions for pico-sdk and picotool. These lines should be updated accordingly:
+
+```dockerfile
+RUN git clone https://github.com/raspberrypi/pico-sdk.git --branch 2.2.0
+
+...
+
+RUN git clone https://github.com/raspberrypi/picotool.git --branch 2.2.0-a4
+```
+
 ## Credits
 
 This template was created by Colin Clark of [Lichen Community Systems Worker Cooperative Canada](https://lichen.coop). It contains the blink example source code from Raspberry Pi's [pico-examples repository](https://github.com/raspberrypi/pico-examples/blob/master/blink/blink.c).
