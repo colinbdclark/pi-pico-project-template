@@ -46,8 +46,9 @@ Init and recursively update all submodules:
 
 The following environment variables need to be set:
 
-1. ```PICO_OPENOCD_PATH``` should point to a directory containing an RP2350-compatible version of OpenOCD (which should contain both the openocd binary and its scripts directory).
-2. ```PICO_TOOLCHAIN_PATH``` should point to a directory containing the arm-eabi-none GCC cross-compiler.
+1. ```PICO_OPENOCD_PATH``` should point to a directory containing an RP2350-compatible version of OpenOCD (which should contain both the openocd binary and its scripts directory). On macOS, the VS Code extension will install this in ```~/.pico-sdk/openocd/<version>```.
+2. ```PICO_TOOLCHAIN_PATH``` should point to a directory containing the arm-eabi-none GCC cross-compiler. On macOS, the VS Code extension will install this in ```~/.pico-sdk/toolchain/<version>```.
+3. ```picotool_DIR``` should be set if you don't have picotool installed globally (the default if installed by the VS Code extension) and don't want it to be downloaded each time you build the project. On macOS, the VS Code extension will install picotool in ```~/.sdk/picotool/<version>```
 
 #### Example Environment Variables
 
