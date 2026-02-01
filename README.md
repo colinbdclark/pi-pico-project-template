@@ -135,11 +135,6 @@ docker run -v `pwd`:/project --rm blinky ./docker-compile.sh
 docker run -v `pwd`:/project -it --rm blinky
 ```
 
-### Caveats
-
-The Docker and local builds share the same CMake build directory, but aren't compatible. Make sure to clean before switching between them.
-
-
 ## Updating
 
 If you need to update to a newer version of the Pico SDK, here's the process for updating the submodules:
@@ -166,7 +161,8 @@ git add lib/pico-sdk
 git commit
 ```
 
-## Update the Tags Used in the Dockerfile
+### Update the Tags Used in the Dockerfile
+
 The Docker file specifies tag versions for pico-sdk and picotool. These lines should be updated accordingly:
 
 ```dockerfile
