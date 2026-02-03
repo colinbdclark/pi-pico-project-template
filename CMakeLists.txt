@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.30)
+cmake_minimum_required(VERSION 3.13)
 
 set(NAME blinky) # *** Replace this with your project's name. ***
 
@@ -24,7 +24,7 @@ include(${PICO_SDK_PATH}/pico_sdk_init.cmake)
 # Compiler settings
 project(${NAME} C CXX ASM)
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 add_compile_options(-Wall)
 
 pico_sdk_init()
@@ -37,8 +37,8 @@ add_executable(${NAME}
     ${SOURCE_FILES}
 )
 
-# Be pedantic about warnings and sanitize for undefined behaviour.
-set_source_files_properties(${SOURCE_FILES} PROPERTIES COMPILE_OPTIONS "-Wextra;-Wpedantic;-fsanitize=undefined")
+# Pedantic warnings on for project source code only.
+set_source_files_properties(${SOURCE_FILES} PROPERTIES COMPILE_OPTIONS "-Wextra;-Wpedantic")
 
 target_link_libraries(${NAME}
     pico_stdlib
@@ -58,3 +58,20 @@ install(FILES
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
 set(CPACK_GENERATOR "ZIP" "TGZ")
 include(CPack)
+
+# Mark TinyUSB includes as system headers
+# to suppress warnings when -Wextra is set.
+if(TARGET tinyusb_common_base)
+    get_target_property(TINYUSB_INCLUDES tinyusb_common_base INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(tinyusb_common_base SYSTEM INTERFACE ${TINYUSB_INCLUDES})
+endif()
+
+if(TARGET tinyusb_device)
+    get_target_property(TINYUSB_INCLUDES tinyusb_device INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(tinyusb_device SYSTEM INTERFACE ${TINYUSB_INCLUDES})
+endif()
+
+if(TARGET tinyusb_host)
+    get_target_property(TINYUSB_INCLUDES tinyusb_host INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(tinyusb_host SYSTEM INTERFACE ${TINYUSB_INCLUDES})
+endif()
