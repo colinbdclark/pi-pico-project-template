@@ -43,6 +43,7 @@ set_source_files_properties(${SOURCE_FILES} PROPERTIES COMPILE_OPTIONS "-Wextra;
 target_link_libraries(${NAME}
     pico_stdlib
     pico_cyw43_arch_none
+    pico_bootsel_via_double_reset
 )
 
 target_compile_definitions(${NAME} PRIVATE)

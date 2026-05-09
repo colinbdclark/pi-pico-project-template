@@ -46,16 +46,19 @@ Init and recursively update all submodules:
 
 The following environment variables need to be set:
 
-1. ```PICO_OPENOCD_PATH``` should point to a directory containing an RP2350-compatible version of OpenOCD (which should contain both the openocd binary and its scripts directory). On macOS, the VS Code extension will install this in ```~/.pico-sdk/openocd/<version>```.
+1. ```PICO_SDK_PATH``` should point to the directory containing the version of the Pico SDK you want to use for this project.
 2. ```PICO_TOOLCHAIN_PATH``` should point to a directory containing the arm-eabi-none GCC cross-compiler. On macOS, the VS Code extension will install this in ```~/.pico-sdk/toolchain/<version>```.
-3. ```picotool_DIR``` should be set if you don't have picotool installed globally (the default if installed by the VS Code extension) and don't want it to be downloaded each time you build the project. On macOS, the VS Code extension will install picotool in ```~/.sdk/picotool/<version>```
+3. ```PICO_OPENOCD_PATH``` should point to a directory containing an RP2350-compatible version of OpenOCD (which should contain both the openocd binary and its scripts directory). On macOS, the VS Code extension will install this in ```~/.pico-sdk/openocd/<version>```.
+4. ```picotool_DIR``` should be set if you don't have picotool installed globally (the default if installed by the VS Code extension) and don't want it to be downloaded each time you build the project. On macOS, the VS Code extension will install picotool in ```~/.pico-sdk/picotool/<version>```
 
 #### Example Environment Variables
 
 ```sh
 PICO_TOOLS_PATH=~/.pico-sdk
-export PICO_TOOLCHAIN_PATH=$PICO_TOOLS_PATH/toolchain/13_3_Rel1
+export PICO_SDK_PATH=$PICO_TOOLS_PATH/sdk/2.2.0
+export PICO_TOOLCHAIN_PATH=$PICO_TOOLS_PATH/toolchain/14_2_Rel1
 export PICO_OPENOCD_PATH=$PICO_TOOLS_PATH/openocd/0.12.0+dev
+export picotool_DIR=$PICO_TOOLS_PATH/picotool/2.2.0-a4
 ```
 
 ## Configure the Project
