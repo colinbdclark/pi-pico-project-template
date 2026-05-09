@@ -37,10 +37,13 @@ Nikhil Dabas provides a [Windows GUI installer for the Pico toolchain](https://w
 
 Raspberry Pi provides a [setup script for Raspberry Pi OS-based Linux](https://github.com/raspberrypi/pico-setup).
 
-### Update Submodules
+### Clone and Update Required Submodules
 
-Init and recursively update all submodules:
+This project includes the Pico SDK as a git submodule. When you first clone this repository, you'll need to recursively initialize and update all submodules (and any of their submodules):
+
 ```git submodule update --init --recursive```
+
+This command can be run at any time to update all submodules to their latest versions.
 
 ### Set Environment Variables
 
