@@ -1,34 +1,47 @@
-FROM ubuntu:latest
+# pictool build stage
+FROM alpine:3.21 AS builder
 
-RUN apt-get update && \
-    apt-get clean &&  \
-    apt-get install -y \
-        wget \
-        curl \
-        git  \
-        python3 \
+RUN apk add --no-cache \
+        git \
+        ca-certificates \
         cmake \
+        build-base \
+        linux-headers \
         gcc-arm-none-eabi \
-        libnewlib-arm-none-eabi \
-        build-essential \
-        libstdc++-arm-none-eabi-newlib
+        g++-arm-none-eabi \
+        newlib-arm-none-eabi \
+        python3
 
-# Install Pi Pico SDK for building picotool with
+# The Pico SDK is only used to build picotool.
+# It is not copied forward.
 WORKDIR /
 RUN git clone https://github.com/raspberrypi/pico-sdk.git --branch 2.2.0
 WORKDIR /pico-sdk
 RUN git submodule update --init
 ENV PICO_SDK_PATH=/pico-sdk
 
-# Build and install picotool
 WORKDIR /
 RUN git clone https://github.com/raspberrypi/picotool.git --branch 2.2.0-a4
 WORKDIR /picotool
 RUN git submodule update --init
-RUN mkdir build
-WORKDIR /picotool/build
-RUN cmake ../
-RUN make
-RUN cmake --install .
+RUN cmake -B build && \
+    cmake --build build -j"$(nproc)" && \
+    cmake --install build --prefix /opt/picotool
+
+# Main stage
+FROM alpine:3.21
+
+RUN apk add --no-cache \
+        git \
+        cmake \
+        build-base \
+        linux-headers \
+        gcc-arm-none-eabi \
+        g++-arm-none-eabi \
+        newlib-arm-none-eabi \
+        python3
+
+# Only bring over the installed picotool.
+COPY --from=builder /opt/picotool /usr/local
 
 WORKDIR /project
