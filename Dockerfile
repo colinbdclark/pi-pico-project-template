@@ -1,19 +1,16 @@
-# pictool build stage
-FROM alpine:3.21 AS builder
+# picotool build stage
+FROM debian:bookworm-slim AS builder
 
-RUN apk add --no-cache \
-        git \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
         ca-certificates \
+        git \
         cmake \
-        build-base \
-        linux-headers \
-        gcc-arm-none-eabi \
-        g++-arm-none-eabi \
-        newlib-arm-none-eabi \
-        python3
+        build-essential && \
+    rm -rf /var/lib/apt/lists/*
 
-# The Pico SDK is only used to build picotool.
-# It is not copied forward.
+# The Pico SDK is only used to build picotool,
+# and is not copied forward.
 WORKDIR /
 RUN git clone https://github.com/raspberrypi/pico-sdk.git --branch 2.2.0
 WORKDIR /pico-sdk
@@ -29,17 +26,36 @@ RUN cmake -B build && \
     cmake --install build --prefix /opt/picotool
 
 # Main stage
-FROM alpine:3.21
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
         git \
         cmake \
-        build-base \
-        linux-headers \
-        gcc-arm-none-eabi \
-        g++-arm-none-eabi \
-        newlib-arm-none-eabi \
-        python3
+        build-essential \
+        python3 \
+        wget \
+        xz-utils && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install a pinned version of the ARM toolchain.
+ARG TARGETARCH
+ARG ARM_TOOLCHAIN_VERSION=14.2.rel1
+RUN set -eux; \
+    case "$TARGETARCH" in \
+        amd64) ARM_HOST=x86_64; ARM_SHA256=62a63b981fe391a9cbad7ef51b17e49aeaa3e7b0d029b36ca1e9c3b2a9b78823 ;; \
+        arm64) ARM_HOST=aarch64; ARM_SHA256=87330bab085dd8749d4ed0ad633674b9dc48b237b61069e3b481abd364d0a684 ;; \
+        *) echo "unsupported TARGETARCH: $TARGETARCH" >&2; exit 1 ;; \
+    esac; \
+    TARBALL="arm-gnu-toolchain-${ARM_TOOLCHAIN_VERSION}-${ARM_HOST}-arm-none-eabi.tar.xz"; \
+    wget -q -O /tmp/toolchain.tar.xz \
+        "https://developer.arm.com/-/media/Files/downloads/gnu/${ARM_TOOLCHAIN_VERSION}/binrel/${TARBALL}"; \
+    echo "${ARM_SHA256}  /tmp/toolchain.tar.xz" | sha256sum -c -; \
+    mkdir -p /opt/arm-toolchain; \
+    tar -xJf /tmp/toolchain.tar.xz -C /opt/arm-toolchain --strip-components=1; \
+    rm /tmp/toolchain.tar.xz
+ENV PATH="/opt/arm-toolchain/bin:${PATH}"
 
 # Only bring over the installed picotool.
 COPY --from=builder /opt/picotool /usr/local
