@@ -9,8 +9,7 @@ RUN apt-get update && \
         build-essential && \
     rm -rf /var/lib/apt/lists/*
 
-# The Pico SDK is only used to build picotool,
-# and is not copied forward.
+# The Pico SDK is temporarily used to build picotool.
 WORKDIR /
 RUN git clone https://github.com/raspberrypi/pico-sdk.git --branch 2.2.0
 WORKDIR /pico-sdk
@@ -24,6 +23,7 @@ RUN git submodule update --init
 RUN cmake -B build && \
     cmake --build build -j"$(nproc)" && \
     cmake --install build --prefix /opt/picotool
+
 
 # Main stage
 FROM debian:bookworm-slim
@@ -57,7 +57,7 @@ RUN set -eux; \
     rm /tmp/toolchain.tar.xz
 ENV PATH="/opt/arm-toolchain/bin:${PATH}"
 
-# Only bring over the installed picotool.
+# Only bring over the installed picotool, not the whole Pico SDK.
 COPY --from=builder /opt/picotool /usr/local
 
 WORKDIR /project
