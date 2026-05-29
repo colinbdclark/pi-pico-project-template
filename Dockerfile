@@ -6,7 +6,12 @@ RUN apt-get update && \
         ca-certificates \
         git \
         cmake \
-        build-essential && \
+        build-essential \
+        automake \
+        libtool \
+        pkg-config \
+        libhidapi-dev \
+        libusb-1.0-0-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # The Pico SDK is temporarily used to build picotool.
@@ -24,6 +29,18 @@ RUN cmake -B build && \
     cmake --build build -j"$(nproc)" && \
     cmake --install build --prefix /opt/picotool
 
+# Build a copy of OpenOCD that's compatible with the RP2350 and the Pico Debug Probe.
+
+# JimTCL dependency required to build OpenOCD
+WORKDIR /
+RUN git clone --recurse-submodules https://github.com/msteveb/jimtcl.git --branch 0.79
+WORKDIR /jimtcl
+RUN ./configure && make && make install
+
+WORKDIR /
+RUN git clone --recurse-submodules https://github.com/openocd-org/openocd.git
+WORKDIR /openocd
+RUN ./bootstrap && ./configure --prefix=/opt/openocd --enable-cmsis-dap=yes && make && make install
 
 # Main stage
 FROM debian:bookworm-slim
@@ -59,5 +76,8 @@ ENV PATH="/opt/arm-toolchain/bin:${PATH}"
 
 # Only bring over the installed picotool, not the whole Pico SDK.
 COPY --from=builder /opt/picotool /usr/local
+
+# Bring over OpenOCD.
+COPY --from=builder /opt/openocd /usr/local
 
 WORKDIR /project
